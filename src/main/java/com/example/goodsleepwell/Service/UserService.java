@@ -43,7 +43,7 @@ public class UserService {
         this.three = three;
     }
 
-    @Async("one")
+    @Async("three")
     public CompletableFuture<DefaultRes> getAllList() {
         return CompletableFuture.supplyAsync(()->{
             return CompletableFuture.supplyAsync(()->userMapper.findAll(),one);
@@ -57,7 +57,7 @@ public class UserService {
 
     /*
      */
-    @Async("two")
+    @Async("one")
     public CompletableFuture<DefaultRes> save(sleepWellBoardContent boardContent) throws ParseException, JSONException {
         CompletableFuture<DefaultRes> ret = CompletableFuture.supplyAsync(()->{
             HttpHeaders headers = new HttpHeaders();
