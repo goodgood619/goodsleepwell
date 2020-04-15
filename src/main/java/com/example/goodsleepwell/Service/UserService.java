@@ -66,7 +66,7 @@ public class UserService {
             map.put("link", Collections.singletonList(boardContent.getLinkUrl()));
             RestTemplate rt = new RestTemplate();
             HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(map, headers);
-            ResponseEntity<String> ret2 = rt.postForEntity("http://localhost:3000/outsideApi", request, String.class);
+            ResponseEntity<String> ret2 = rt.postForEntity("http://localhost:3000/axios", request, String.class);
             String body = ret2.getBody();
             Gson gson = new Gson();
             JsonObject json = gson.fromJson(body, JsonObject.class);
