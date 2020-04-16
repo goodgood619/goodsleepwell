@@ -38,10 +38,10 @@ public class UserService {
         this.three = three;
     }
 
-    @Async("three")
+    @Async("one")
     public CompletableFuture<DefaultRes> getAllList() {
         return CompletableFuture.supplyAsync(()->{
-            return CompletableFuture.supplyAsync(()->userMapper.findAll(),one);
+            return CompletableFuture.supplyAsync(()->userMapper.findAll(),three);
         },one).thenApply(s->{
             if (s.join().isEmpty()) {
                 return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
@@ -52,7 +52,7 @@ public class UserService {
 
     /*
      */
-    @Async("one")
+    @Async("two")
     public CompletableFuture<DefaultRes> save(sleepWellBoardContent boardContent) throws JSONException {
         CompletableFuture<DefaultRes> ret = CompletableFuture.supplyAsync(()->{
             ResponseEntity<String> ret2 = apiAxiosWithNode(boardContent,containsApi(boardContent.getLinkUrl()));
@@ -66,7 +66,7 @@ public class UserService {
             boardContent.setDislikeCount(0);
             boardContent.setFireCount(0);
             return boardContent;
-        },two).thenApply(s->{
+        },one).thenApply(s->{
             try {
                 userMapper.save(s);
             }
@@ -82,7 +82,7 @@ public class UserService {
         return ret;
     }
     private int containsApi(String s) {
-        if(s.contains("youtube")) return 1;
+        if(s.contains("youtube") || s.contains("youtu.be")) return 1;
         if(s.contains("twitch")) return 2;
         return 0;
     }

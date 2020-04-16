@@ -2,8 +2,6 @@ package com.example.goodsleepwell.Model;
 
 import lombok.Data;
 
-import java.sql.Time;
-
 @Data
 public class sleepWellBoardContent {
     private String writer;

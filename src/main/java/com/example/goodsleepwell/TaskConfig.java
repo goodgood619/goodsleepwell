@@ -40,9 +40,9 @@ public class TaskConfig {
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
         taskExecutor.setCorePoolSize(6);
         taskExecutor.setMaxPoolSize(50);
-        taskExecutor.setQueueCapacity(1001);
+        taskExecutor.setQueueCapacity(494);
         taskExecutor.setWaitForTasksToCompleteOnShutdown(true);
-        taskExecutor.setAwaitTerminationSeconds(60);
+        taskExecutor.setAwaitTerminationSeconds(1001);
         taskExecutor.setThreadNamePrefix("twoExecutor-");
         taskExecutor.initialize();
         return taskExecutor;
@@ -52,9 +52,9 @@ public class TaskConfig {
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
         taskExecutor.setCorePoolSize(6);
         taskExecutor.setMaxPoolSize(50);
-        taskExecutor.setQueueCapacity(1001);
+        taskExecutor.setQueueCapacity(494);
         taskExecutor.setWaitForTasksToCompleteOnShutdown(true);
-        taskExecutor.setAwaitTerminationSeconds(60);
+        taskExecutor.setAwaitTerminationSeconds(1001);
         taskExecutor.setThreadNamePrefix("threeExecutor-");
         taskExecutor.initialize();
         return taskExecutor;

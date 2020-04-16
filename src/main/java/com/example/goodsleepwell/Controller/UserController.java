@@ -23,15 +23,13 @@ import static com.example.goodsleepwell.Model.DefaultRes.FAIL_DEFAULT_RES;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
-    private final ThreadPoolTaskExecutor one,two,three;
-    public UserController(UserService userService,ThreadPoolTaskExecutor one,ThreadPoolTaskExecutor two, ThreadPoolTaskExecutor three) {
+    private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
+    public UserController(UserService userService,final ThreadPoolTaskExecutor threadPoolTaskExecutor) {
         this.userService = userService;
-        this.one = one;
-        this.two = two;
-        this.three = three;
+        this.threadPoolTaskExecutor = threadPoolTaskExecutor;
     }
 
-    @Async("three")
+    @Async("threadPoolTaskExecutor")
     @GetMapping("")
     public CompletableFuture<ResponseEntity> getAll() {
         CompletableFuture<ResponseEntity> result;
@@ -44,7 +42,7 @@ public class UserController {
         return result;
     }
 
-    @Async("one")
+    @Async("threadPoolTaskExecutor")
     @PostMapping("")
     public CompletableFuture<ResponseEntity> downAndUpload(sleepWellBoardContent boardContent) {
         try {
