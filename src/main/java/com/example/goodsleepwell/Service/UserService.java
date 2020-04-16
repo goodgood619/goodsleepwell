@@ -8,10 +8,7 @@ import com.example.goodsleepwell.mapper.UserMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.json.JSONParser;
-import org.apache.tomcat.util.json.ParseException;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -25,8 +22,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
@@ -58,15 +53,9 @@ public class UserService {
     /*
      */
     @Async("one")
-    public CompletableFuture<DefaultRes> save(sleepWellBoardContent boardContent) throws ParseException, JSONException {
+    public CompletableFuture<DefaultRes> save(sleepWellBoardContent boardContent) throws JSONException {
         CompletableFuture<DefaultRes> ret = CompletableFuture.supplyAsync(()->{
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-            map.put("link", Collections.singletonList(boardContent.getLinkUrl()));
-            RestTemplate rt = new RestTemplate();
-            HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(map, headers);
-            ResponseEntity<String> ret2 = rt.postForEntity("http://localhost:3000/axios", request, String.class);
+            ResponseEntity<String> ret2 = apiAxiosWithNode(boardContent,containsApi(boardContent.getLinkUrl()));
             String body = ret2.getBody();
             Gson gson = new Gson();
             JsonObject json = gson.fromJson(body, JsonObject.class);
@@ -91,5 +80,20 @@ public class UserService {
             return CompletableFuture.supplyAsync(()-> DefaultRes.res(StatusCode.CREATED,ResponseMessage.CREATED_USER));
         }
         return ret;
+    }
+    private int containsApi(String s) {
+        if(s.contains("youtube")) return 1;
+        if(s.contains("twitch")) return 2;
+        return 0;
+    }
+    public ResponseEntity<String> apiAxiosWithNode(sleepWellBoardContent boardContent,int choice) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.put("link", Collections.singletonList(boardContent.getLinkUrl()));
+        RestTemplate rt = new RestTemplate();
+        HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(map, headers);
+        if(choice == 1) return rt.postForEntity("http://localhost:3000/axios/youtube", request, String.class);
+        else return rt.postForEntity("http://localhost:3000/axios/twitch",request,String.class);
     }
 }
