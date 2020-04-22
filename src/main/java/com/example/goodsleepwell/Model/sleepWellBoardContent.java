@@ -9,6 +9,7 @@ public class sleepWellBoardContent {
     private String linkUrl;
     private String linkTitle;
     private String linkChannel;
+    private String thumbnailUrl;
     private int likeCount;
     private int dislikeCount;
     private int fireCount;

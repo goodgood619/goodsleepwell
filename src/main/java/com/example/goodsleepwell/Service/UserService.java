@@ -62,6 +62,7 @@ public class UserService {
             boardContent.setLinkChannel(json.get("linkChannel").getAsString());
             boardContent.setLinkUrl(json.get("linkAddress").getAsString());
             boardContent.setLinkTitle(json.get("linkTitle").getAsString());
+            boardContent.setThumbnailUrl(json.get("thumbnailUrl").getAsString());
             boardContent.setLikeCount(0);
             boardContent.setDislikeCount(0);
             boardContent.setFireCount(0);
