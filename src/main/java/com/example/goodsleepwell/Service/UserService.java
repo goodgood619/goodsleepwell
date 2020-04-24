@@ -17,21 +17,23 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Service
 @EnableAsync
 public class UserService {
     private UserMapper userMapper;
-    private ThreadPoolTaskExecutor one,two,three;
+    private ThreadPoolTaskExecutor one, two, three;
 
-    public UserService(UserMapper userMapper,ThreadPoolTaskExecutor one,ThreadPoolTaskExecutor two, ThreadPoolTaskExecutor three) {
+    public UserService(UserMapper userMapper, ThreadPoolTaskExecutor one, ThreadPoolTaskExecutor two, ThreadPoolTaskExecutor three) {
         this.userMapper = userMapper;
         this.one = one;
         this.two = two;
@@ -40,9 +42,9 @@ public class UserService {
 
     @Async("one")
     public CompletableFuture<DefaultRes> getAllList() {
-        return CompletableFuture.supplyAsync(()->{
-            return CompletableFuture.supplyAsync(()->userMapper.findAll(),three);
-        },one).thenApply(s->{
+        return CompletableFuture.supplyAsync(() -> {
+            return CompletableFuture.supplyAsync(() -> userMapper.findAll(), three);
+        }, one).thenApply(s -> {
             if (s.join().isEmpty()) {
                 return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
             }
@@ -50,12 +52,46 @@ public class UserService {
         });
     }
 
+    @Async("three")
+    @Transactional
+    public CompletableFuture<DefaultRes> likeUpload(int id) throws ExecutionException, InterruptedException {
+        CompletableFuture<DefaultRes> ret = CompletableFuture.supplyAsync(() -> {
+            try {
+                userMapper.likeupdate(id);
+            } catch (Exception e) {
+                log.error("{}", e.getMessage());
+                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+            }
+            return null;
+        });
+        if (ret.get() == null) {
+            return CompletableFuture.supplyAsync(() -> DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER));
+        } else return ret;
+    }
+
+    @Async("three")
+    @Transactional
+    public CompletableFuture<DefaultRes> dislikeUpload(int id) throws ExecutionException, InterruptedException {
+        CompletableFuture<DefaultRes> ret = CompletableFuture.supplyAsync(() -> {
+            try {
+                userMapper.dislikeupdate(id);
+            } catch (Exception e) {
+                log.error("{}", e.getMessage());
+                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+            }
+            return null;
+        });
+        if (ret.get() == null) {
+            return CompletableFuture.supplyAsync(() -> DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER));
+        } else return ret;
+    }
+
     /*
      */
     @Async("two")
     public CompletableFuture<DefaultRes> save(sleepWellBoardContent boardContent) throws JSONException {
-        CompletableFuture<DefaultRes> ret = CompletableFuture.supplyAsync(()->{
-            ResponseEntity<String> ret2 = apiAxiosWithNode(boardContent,containsApi(boardContent.getLinkUrl()));
+        CompletableFuture<DefaultRes> ret = CompletableFuture.supplyAsync(() -> {
+            ResponseEntity<String> ret2 = apiAxiosWithNode(boardContent, containsApi(boardContent.getLinkUrl()));
             String body = ret2.getBody();
             Gson gson = new Gson();
             JsonObject json = gson.fromJson(body, JsonObject.class);
@@ -67,34 +103,35 @@ public class UserService {
             boardContent.setDislikeCount(0);
             boardContent.setFireCount(0);
             return boardContent;
-        },one).thenApply(s->{
+        }, one).thenApply(s -> {
             try {
                 userMapper.save(s);
-            }
-            catch (Exception e) {
-                log.error("{}",e.getMessage());
+            } catch (Exception e) {
+                log.error("{}", e.getMessage());
                 return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }
             return null;
         });
-        if(ret == null) {
-            return CompletableFuture.supplyAsync(()-> DefaultRes.res(StatusCode.CREATED,ResponseMessage.CREATED_USER));
+        if (ret == null) {
+            return CompletableFuture.supplyAsync(() -> DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATED_USER));
         }
         return ret;
     }
+
     private int containsApi(String s) {
-        if(s.contains("youtube") || s.contains("youtu.be")) return 1;
-        if(s.contains("twitch")) return 2;
+        if (s.contains("youtube") || s.contains("youtu.be")) return 1;
+        if (s.contains("twitch")) return 2;
         return 0;
     }
-    public ResponseEntity<String> apiAxiosWithNode(sleepWellBoardContent boardContent,int choice) {
+
+    public ResponseEntity<String> apiAxiosWithNode(sleepWellBoardContent boardContent, int choice) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.put("link", Collections.singletonList(boardContent.getLinkUrl()));
         RestTemplate rt = new RestTemplate();
-        HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(map, headers);
-        if(choice == 1) return rt.postForEntity("http://localhost:3000/axios/youtube", request, String.class);
-        else return rt.postForEntity("http://localhost:3000/axios/twitch",request,String.class);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+        if (choice == 1) return rt.postForEntity("http://localhost:3000/axios/youtube", request, String.class);
+        else return rt.postForEntity("http://localhost:3000/axios/twitch", request, String.class);
     }
 }

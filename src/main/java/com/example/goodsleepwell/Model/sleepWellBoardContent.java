@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class sleepWellBoardContent {
+    private int id;
     private String writer;
     private String writerTitle;
     private String linkUrl;

@@ -1,10 +1,7 @@
 package com.example.goodsleepwell.mapper;
 
 import com.example.goodsleepwell.Model.sleepWellBoardContent;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -18,4 +15,12 @@ public interface UserMapper {
             "VALUES(#{swBoard.writer}, #{swBoard.writerTitle},#{swBoard.linkUrl},#{swBoard.linkTitle}," +
             "#{swBoard.linkChannel},#{swBoard.likeCount},#{swBoard.dislikeCount},#{swBoard.fireCount},#{swBoard.thumbnailUrl})")
     void save(@Param("swBoard") final sleepWellBoardContent swBoard);
+
+    @Update("update sleepBoardContent set likeCount = likeCount+1 where id = #{id}")
+    void likeupdate(@Param("id") final int id);
+
+    @Update("update sleepBoardContent set dislikeCount = dislikeCount+1 where id = #{id}")
+    void dislikeupdate(@Param("id") final int id);
+
+
 }
