@@ -11,4 +11,5 @@ public class sleepBoardRereply {
     private String password;
     private int likeCount;
     private int fireCount;
+    private String boardIp;
 }

@@ -86,6 +86,31 @@ public class UserService {
         } else return ret;
     }
 
+
+    @Async("three")
+    @Transactional
+    public CompletableFuture<Boolean> checkPostorNot(String boardIp) {
+        CompletableFuture<Integer> ret= CompletableFuture.supplyAsync(()->{
+            return CompletableFuture.supplyAsync(()->userMapper.checkPostorNot(boardIp),three);
+        },three).thenApply(s->{
+            if(s.join() == 0) {
+                return 1;
+            }
+            return 0;
+        });
+        if(ret.join() == 1) return CompletableFuture.completedFuture(true);
+        else {
+            log.info("postcheck2");
+            ret = CompletableFuture.supplyAsync(()->{
+                return CompletableFuture.supplyAsync(()->userMapper.checkPostorNot2(boardIp),three);
+            },three).thenApply(s->{
+                if(s.join() == 1) return 1;
+                return 0;
+            });
+            if(ret.join() == 1) return CompletableFuture.completedFuture(true);
+            return CompletableFuture.completedFuture(false);
+        }
+    }
     /*
      */
     @Async("two")

@@ -2,6 +2,7 @@ package com.example.goodsleepwell.Controller;
 
 import com.example.goodsleepwell.Model.sleepWellBoardContent;
 import com.example.goodsleepwell.Service.UserService;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.http.HttpStatus;
@@ -12,8 +13,10 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static com.example.goodsleepwell.Model.DefaultRes.FAIL_DEFAULT_RES;
+import static com.example.goodsleepwell.Model.DefaultRes.FAIL_POST;
 
 @Slf4j
 @RestController
@@ -21,10 +24,11 @@ import static com.example.goodsleepwell.Model.DefaultRes.FAIL_DEFAULT_RES;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
-    private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
-    public UserController(UserService userService,final ThreadPoolTaskExecutor threadPoolTaskExecutor) {
+    private final ThreadPoolTaskExecutor threadPoolTaskExecutor,one;
+    public UserController(UserService userService,final ThreadPoolTaskExecutor threadPoolTaskExecutor,ThreadPoolTaskExecutor one) {
         this.userService = userService;
         this.threadPoolTaskExecutor = threadPoolTaskExecutor;
+        this.one = one;
     }
 
     @Async("threadPoolTaskExecutor")
@@ -43,11 +47,21 @@ public class UserController {
 
     @Async("threadPoolTaskExecutor")
     @PostMapping("")
-    public CompletableFuture<ResponseEntity> downAndUpload(sleepWellBoardContent boardContent) {
+    public CompletableFuture<ResponseEntity> downAndUpload(sleepWellBoardContent boardContent) throws ExecutionException, InterruptedException {
+        CompletableFuture<Boolean> ret = CompletableFuture.supplyAsync(()->{
+            return userService.checkPostorNot(boardContent.getBoardIp());
+        },one).get();
         try {
-            return CompletableFuture.completedFuture(new ResponseEntity<>(userService.save(boardContent).get(), HttpStatus.OK));
+            System.out.println(ret);
+            log.info("try");
+            if(ret.get()) {
+                log.info("postcheckok");
+                return CompletableFuture.completedFuture(new ResponseEntity<>(userService.save(boardContent).get(), HttpStatus.OK));
+            }
+            else return CompletableFuture.completedFuture(new ResponseEntity<>(FAIL_POST,HttpStatus.NOT_ACCEPTABLE));
         }
         catch (Exception e) {
+            log.info("error");
             return CompletableFuture.completedFuture(new ResponseEntity<>(FAIL_DEFAULT_RES,HttpStatus.INTERNAL_SERVER_ERROR));
         }
     }
