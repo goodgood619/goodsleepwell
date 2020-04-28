@@ -11,4 +11,5 @@ public class ResponseMessage {
     public static final String INTERNAL_SERVER_ERROR = "서버 내부 에러";
     public static final String DB_ERROR = "데이터베이스 에러";
     public static final String POST_ERROR = "게시물 등록 에러";
+    public static final String LIKE_ERROR= "좋아요 IP 중복 에러";
 }

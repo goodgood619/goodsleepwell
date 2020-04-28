@@ -86,6 +86,29 @@ public class UserService {
         } else return ret;
     }
 
+    @Async("two")
+    @Transactional
+    public CompletableFuture<Boolean> checkLike(int id,String boardIp) {
+        CompletableFuture<Integer> ret = CompletableFuture.supplyAsync(()-> userMapper.checkLike(boardIp,id),two);
+        if(ret.join() == 1) return CompletableFuture.completedFuture(false);
+        return CompletableFuture.completedFuture(true);
+    }
+    @Async("two")
+    @Transactional
+    public CompletableFuture<Boolean> saveLike(int id,String boardIp) {
+        CompletableFuture<Boolean> ret= CompletableFuture.supplyAsync(()->{
+            try{
+                userMapper.likesave(boardIp,id);
+            }
+            catch (Exception e) {
+                log.error("{}", e.getMessage());
+                return false;
+            }
+            return true;
+        },two);
+        if(ret.join()) return CompletableFuture.completedFuture(true);
+        return CompletableFuture.completedFuture(false);
+    }
 
     @Async("three")
     @Transactional

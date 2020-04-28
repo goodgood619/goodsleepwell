@@ -15,8 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static com.example.goodsleepwell.Model.DefaultRes.FAIL_DEFAULT_RES;
-import static com.example.goodsleepwell.Model.DefaultRes.FAIL_POST;
+import static com.example.goodsleepwell.Model.DefaultRes.*;
 
 @Slf4j
 @RestController
@@ -68,9 +67,16 @@ public class UserController {
 
     @Async("threadPoolTaskExecutor")
     @PutMapping("like")
-    public CompletableFuture<ResponseEntity> likeUpdate(@Param("id") final int id) {
+    public CompletableFuture<ResponseEntity> likeUpdate(@Param("id") final int id,@Param("boardIp") final String boardIp) {
+        CompletableFuture<Boolean> ret = CompletableFuture.supplyAsync(()->{
+            return userService.checkLike(id,boardIp);
+        },one).join();
         try {
-            return CompletableFuture.completedFuture(new ResponseEntity<>(userService.likeUpload(id).get(),HttpStatus.OK));
+            if(ret.join()) {
+                CompletableFuture.supplyAsync(()->userService.saveLike(id,boardIp));
+                return CompletableFuture.completedFuture(new ResponseEntity<>(userService.likeUpload(id).get(), HttpStatus.OK));
+            }
+            else return CompletableFuture.completedFuture(new ResponseEntity<>(FAIL_LIKE,HttpStatus.NOT_ACCEPTABLE));
         }
         catch (Exception e) {
             return CompletableFuture.completedFuture(new ResponseEntity<>(FAIL_DEFAULT_RES,HttpStatus.INTERNAL_SERVER_ERROR));
@@ -79,7 +85,7 @@ public class UserController {
 
     @Async("threadPoolTaskExecutor")
     @PutMapping("dislike")
-    public CompletableFuture<ResponseEntity> dislikeUpdate(@Param("id") final int id) {
+    public CompletableFuture<ResponseEntity> dislikeUpdate(@Param("id") final int id,@Param("boardIp") final String boardIp) {
         try {
             return CompletableFuture.completedFuture(new ResponseEntity<>(userService.dislikeUpload(id).get(),HttpStatus.OK));
         }

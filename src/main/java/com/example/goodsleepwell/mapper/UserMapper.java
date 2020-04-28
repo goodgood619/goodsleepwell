@@ -1,5 +1,6 @@
 package com.example.goodsleepwell.mapper;
 
+import com.example.goodsleepwell.Model.sleepLikeCheck;
 import com.example.goodsleepwell.Model.sleepWellBoardContent;
 import org.apache.ibatis.annotations.*;
 
@@ -29,4 +30,9 @@ public interface UserMapper {
             "where boardIp = #{boardIp} order by a.registerTime desc limit 1)>=300")
     int checkPostorNot2(@Param("boardIp") final String boardIp);
 
+    @Select("select count(*) from sleepLikeCheck where boardIp = #{boardIp} and id = #{id}")
+    int checkLike(@Param("boardIp") final String boardIp, @Param("id") final int id);
+
+    @Insert("insert into sleepLikeCheck(id,boardIp) values(#{id},#{boardIp})")
+    void likesave(@Param("boardIp") final String boardIp, @Param("id") final int id);
 }
