@@ -33,6 +33,6 @@ public interface UserMapper {
     @Select("select count(*) from sleepLikeCheck where boardIp = #{boardIp} and id = #{id}")
     int checkLike(@Param("boardIp") final String boardIp, @Param("id") final int id);
 
-    @Insert("insert into sleepLikeCheck(id,boardIp) values(#{id},#{boardIp})")
+    @Insert("insert into sleepLikeCheck(likeTime,id,boardIp) values(now(),#{id},#{boardIp})")
     void likesave(@Param("boardIp") final String boardIp, @Param("id") final int id);
 }

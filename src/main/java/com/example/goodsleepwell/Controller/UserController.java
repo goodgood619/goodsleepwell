@@ -86,8 +86,15 @@ public class UserController {
     @Async("threadPoolTaskExecutor")
     @PutMapping("dislike")
     public CompletableFuture<ResponseEntity> dislikeUpdate(@Param("id") final int id,@Param("boardIp") final String boardIp) {
+        CompletableFuture<Boolean> ret = CompletableFuture.supplyAsync(()->{
+            return userService.checkLike(id,boardIp);
+        },one).join();
         try {
-            return CompletableFuture.completedFuture(new ResponseEntity<>(userService.dislikeUpload(id).get(),HttpStatus.OK));
+            if(ret.join()) {
+                CompletableFuture.supplyAsync(() -> userService.saveLike(id, boardIp));
+                return CompletableFuture.completedFuture(new ResponseEntity<>(userService.dislikeUpload(id).get(), HttpStatus.OK));
+            }
+            else return CompletableFuture.completedFuture(new ResponseEntity<>(FAIL_LIKE,HttpStatus.NOT_ACCEPTABLE));
         }
         catch (Exception e) {
             return CompletableFuture.completedFuture(new ResponseEntity<>(FAIL_DEFAULT_RES,HttpStatus.INTERNAL_SERVER_ERROR));
