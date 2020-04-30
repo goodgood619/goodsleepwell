@@ -100,4 +100,21 @@ public class UserController {
             return CompletableFuture.completedFuture(new ResponseEntity<>(FAIL_DEFAULT_RES,HttpStatus.INTERNAL_SERVER_ERROR));
         }
     }
+
+    @Async("threadPoolTaskExecutor")
+    @DeleteMapping("delete")
+    public CompletableFuture<ResponseEntity> deleteContent(@Param("id") final int id,@RequestParam(value = "password", defaultValue = "") final String password) {
+        CompletableFuture<Boolean> ret = CompletableFuture.supplyAsync(()-> {
+            return userService.checkDelete(id, password);
+        },one).join();
+        try {
+            if(ret.join()) {
+                return CompletableFuture.completedFuture(new ResponseEntity<>(userService.delete(id,password).get(),HttpStatus.OK));
+            }
+            else return CompletableFuture.completedFuture(new ResponseEntity<>(FAIL_DELETE,HttpStatus.NOT_ACCEPTABLE));
+        }
+        catch (Exception e) {
+            return CompletableFuture.completedFuture(new ResponseEntity<>(FAIL_DEFAULT_RES,HttpStatus.INTERNAL_SERVER_ERROR));
+        }
+    }
 }

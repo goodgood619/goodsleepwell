@@ -12,16 +12,16 @@ public interface UserMapper {
     @Select("select * from sleepBoardContent")
     List<sleepWellBoardContent> findAll();
 
-    @Insert("insert into sleepBoardContent(writer,writerTitle,linkUrl,linkTitle,linkChannel,likeCount,dislikeCount,fireCount,thumbnailUrl,boardIp) " +
+    @Insert("insert into sleepBoardContent(writer,writerTitle,linkUrl,linkTitle,linkChannel,likeCount,dislikeCount,fireCount,thumbnailUrl,boardIp,password) " +
             "VALUES(#{swBoard.writer}, #{swBoard.writerTitle},#{swBoard.linkUrl},#{swBoard.linkTitle}," +
-            "#{swBoard.linkChannel},#{swBoard.likeCount},#{swBoard.dislikeCount},#{swBoard.fireCount},#{swBoard.thumbnailUrl},#{swBoard.boardIp})")
+            "#{swBoard.linkChannel},#{swBoard.likeCount},#{swBoard.dislikeCount},#{swBoard.fireCount},#{swBoard.thumbnailUrl},#{swBoard.boardIp},#{swBoard.password})")
     void save(@Param("swBoard") final sleepWellBoardContent swBoard);
 
     @Update("update sleepBoardContent set likeCount = likeCount+1 where id = #{id}")
-    void likeupdate(@Param("id") final int id);
+    void likeUpdate(@Param("id") final int id);
 
     @Update("update sleepBoardContent set dislikeCount = dislikeCount+1 where id = #{id}")
-    void dislikeupdate(@Param("id") final int id);
+    void dislikeUpdate(@Param("id") final int id);
 
     @Select("select count(*) from sleepBoardContent where boardIp = #{boardIp}")
     int checkPostorNot(@Param("boardIp") final String boardIp);
@@ -34,5 +34,11 @@ public interface UserMapper {
     int checkLike(@Param("boardIp") final String boardIp, @Param("id") final int id);
 
     @Insert("insert into sleepLikeCheck(likeTime,id,boardIp) values(now(),#{id},#{boardIp})")
-    void likesave(@Param("boardIp") final String boardIp, @Param("id") final int id);
+    void likeSave(@Param("boardIp") final String boardIp, @Param("id") final int id);
+
+    @Select("select count(*) from sleepBoardContent where id = #{id} and password = #{password}")
+    int checkDelete(@Param("password") final String password, @Param("id") final int id);
+
+    @Delete("delete from sleepBoardContent where id = #{id} and password = #{password}")
+    void delete(@Param("password") final String password,@Param("id") final int id);
 }

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @Getter
@@ -39,4 +40,5 @@ public class DefaultRes<T> {
     public static final DefaultRes FAIL_DEFAULT_RES = new DefaultRes(StatusCode.INTERNAL_SERVER_ERROR, ResponseMessage.INTERNAL_SERVER_ERROR);
     public static final DefaultRes FAIL_POST = new DefaultRes(StatusCode.POST_ERROR,ResponseMessage.POST_ERROR);
     public static final DefaultRes FAIL_LIKE = new DefaultRes(StatusCode.LIKE_ERROR,ResponseMessage.LIKE_ERROR);
+    public static final DefaultRes FAIL_DELETE= new DefaultRes(StatusCode.DELETE_ERROR, ResponseMessage.DELETE_ERROR);
 }

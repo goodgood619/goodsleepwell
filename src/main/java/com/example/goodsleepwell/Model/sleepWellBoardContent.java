@@ -15,4 +15,5 @@ public class sleepWellBoardContent {
     private int dislikeCount;
     private int fireCount;
     private String boardIp;
+    private String password;
 }

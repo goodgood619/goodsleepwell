@@ -57,7 +57,7 @@ public class UserService {
     public CompletableFuture<DefaultRes> likeUpload(int id) throws ExecutionException, InterruptedException {
         CompletableFuture<DefaultRes> ret = CompletableFuture.supplyAsync(() -> {
             try {
-                userMapper.likeupdate(id);
+                userMapper.likeUpdate(id);
             } catch (Exception e) {
                 log.error("{}", e.getMessage());
                 return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
@@ -74,7 +74,7 @@ public class UserService {
     public CompletableFuture<DefaultRes> dislikeUpload(int id) throws ExecutionException, InterruptedException {
         CompletableFuture<DefaultRes> ret = CompletableFuture.supplyAsync(() -> {
             try {
-                userMapper.dislikeupdate(id);
+                userMapper.dislikeUpdate(id);
             } catch (Exception e) {
                 log.error("{}", e.getMessage());
                 return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
@@ -88,51 +88,78 @@ public class UserService {
 
     @Async("two")
     @Transactional
-    public CompletableFuture<Boolean> checkLike(int id,String boardIp) {
-        CompletableFuture<Integer> ret = CompletableFuture.supplyAsync(()-> userMapper.checkLike(boardIp,id),two);
-        if(ret.join() == 1) return CompletableFuture.completedFuture(false);
+    public CompletableFuture<Boolean> checkLike(int id, String boardIp) {
+        CompletableFuture<Integer> ret = CompletableFuture.supplyAsync(() -> userMapper.checkLike(boardIp, id), two);
+        if (ret.join() == 1) return CompletableFuture.completedFuture(false);
         return CompletableFuture.completedFuture(true);
     }
+
+
     @Async("two")
     @Transactional
-    public CompletableFuture<Boolean> saveLike(int id,String boardIp) {
-        CompletableFuture<Boolean> ret= CompletableFuture.supplyAsync(()->{
-            try{
-                userMapper.likesave(boardIp,id);
-            }
-            catch (Exception e) {
+    public CompletableFuture<Boolean> saveLike(int id, String boardIp) {
+        CompletableFuture<Boolean> ret = CompletableFuture.supplyAsync(() -> {
+            try {
+                userMapper.likeSave(boardIp, id);
+            } catch (Exception e) {
                 log.error("{}", e.getMessage());
                 return false;
             }
             return true;
-        },two);
-        if(ret.join()) return CompletableFuture.completedFuture(true);
+        }, two);
+        if (ret.join()) return CompletableFuture.completedFuture(true);
+        return CompletableFuture.completedFuture(false);
+    }
+
+
+    @Async("one")
+    public CompletableFuture<Boolean> checkDelete(int id, String password) {
+        CompletableFuture<Integer> ret = CompletableFuture.supplyAsync(() -> userMapper.checkDelete(password, id), one);
+        if (ret.join() == 1) return CompletableFuture.completedFuture(true);
         return CompletableFuture.completedFuture(false);
     }
 
     @Async("three")
     @Transactional
     public CompletableFuture<Boolean> checkPostorNot(String boardIp) {
-        CompletableFuture<Integer> ret= CompletableFuture.supplyAsync(()->{
-            return CompletableFuture.supplyAsync(()->userMapper.checkPostorNot(boardIp),three);
-        },three).thenApply(s->{
-            if(s.join() == 0) {
+        CompletableFuture<Integer> ret = CompletableFuture.supplyAsync(() -> {
+            return CompletableFuture.supplyAsync(() -> userMapper.checkPostorNot(boardIp), three);
+        }, three).thenApply(s -> {
+            if (s.join() == 0) {
                 return 1;
             }
             return 0;
         });
-        if(ret.join() == 1) return CompletableFuture.completedFuture(true);
+        if (ret.join() == 1) return CompletableFuture.completedFuture(true);
         else {
             log.info("postcheck2");
-            ret = CompletableFuture.supplyAsync(()->{
-                return CompletableFuture.supplyAsync(()->userMapper.checkPostorNot2(boardIp),three);
-            },three).thenApply(s->{
-                if(s.join() == 1) return 1;
+            ret = CompletableFuture.supplyAsync(() -> {
+                return CompletableFuture.supplyAsync(() -> userMapper.checkPostorNot2(boardIp), three);
+            }, three).thenApply(s -> {
+                if (s.join() == 1) return 1;
                 return 0;
             });
-            if(ret.join() == 1) return CompletableFuture.completedFuture(true);
+            if (ret.join() == 1) return CompletableFuture.completedFuture(true);
             return CompletableFuture.completedFuture(false);
         }
+    }
+
+
+    @Async("three")
+    public CompletableFuture<DefaultRes> delete(int id,String password) {
+        CompletableFuture<DefaultRes> ret = CompletableFuture.supplyAsync(()->{
+            try {
+                userMapper.delete(password,id);
+            }
+            catch (Exception e) {
+                return DefaultRes.res(StatusCode.DB_ERROR,ResponseMessage.DB_ERROR);
+            }
+            return null;
+        },three);
+        if(ret.join() == null) {
+            return CompletableFuture.supplyAsync(()->DefaultRes.res(StatusCode.OK,ResponseMessage.DELETE_USER));
+        }
+        return ret;
     }
     /*
      */

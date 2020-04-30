@@ -13,4 +13,5 @@ public class StatusCode {
     public static final int DB_ERROR = 600;
     public static final int POST_ERROR = 601;
     public static final int LIKE_ERROR = 602;
+    public static final int DELETE_ERROR = 603;
 }
