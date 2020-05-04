@@ -1,8 +1,6 @@
 package com.example.goodsleepwell.Controller;
 
-import com.example.goodsleepwell.Model.DefaultRes;
 import com.example.goodsleepwell.Service.ReplyService;
-import com.example.goodsleepwell.Service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.http.HttpStatus;
@@ -25,7 +23,8 @@ import static com.example.goodsleepwell.Model.DefaultRes.FAIL_DEFAULT_RES;
 public class ReplyController {
     private final ReplyService replyService;
     private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
-    public ReplyController(ReplyService replyService,final ThreadPoolTaskExecutor threadPoolTaskExecutor) {
+
+    public ReplyController(ReplyService replyService, final ThreadPoolTaskExecutor threadPoolTaskExecutor) {
         this.replyService = replyService;
         this.threadPoolTaskExecutor = threadPoolTaskExecutor;
     }

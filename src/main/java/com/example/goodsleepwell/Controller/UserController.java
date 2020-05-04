@@ -46,12 +46,11 @@ public class UserController {
 
     @Async("threadPoolTaskExecutor")
     @PostMapping("")
-    public CompletableFuture<ResponseEntity> downAndUpload(sleepWellBoardContent boardContent) throws ExecutionException, InterruptedException {
+    public CompletableFuture<ResponseEntity> downAndUpload(@RequestBody sleepWellBoardContent boardContent) throws ExecutionException, InterruptedException {
         CompletableFuture<Boolean> ret = CompletableFuture.supplyAsync(()->{
             return userService.checkPostorNot(boardContent.getBoardIp());
         },one).get();
         try {
-            System.out.println(ret);
             log.info("try");
             if(ret.get()) {
                 log.info("postcheckok");

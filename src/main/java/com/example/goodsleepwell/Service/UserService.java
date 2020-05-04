@@ -206,7 +206,7 @@ public class UserService {
         map.put("link", Collections.singletonList(boardContent.getLinkUrl()));
         RestTemplate rt = new RestTemplate();
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        if (choice == 1) return rt.postForEntity("http://localhost:3000/axios/youtube", request, String.class);
-        else return rt.postForEntity("http://localhost:3000/axios/twitch", request, String.class);
+        if (choice == 1) return rt.postForEntity("http://module:3000/axios/youtube", request, String.class);
+        else return rt.postForEntity("http://module:3000/axios/twitch", request, String.class);
     }
 }

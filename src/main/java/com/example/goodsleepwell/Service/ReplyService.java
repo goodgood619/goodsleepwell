@@ -4,7 +4,6 @@ import com.example.goodsleepwell.Model.DefaultRes;
 import com.example.goodsleepwell.Utils.ResponseMessage;
 import com.example.goodsleepwell.Utils.StatusCode;
 import com.example.goodsleepwell.mapper.ReplyMapper;
-import com.example.goodsleepwell.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
