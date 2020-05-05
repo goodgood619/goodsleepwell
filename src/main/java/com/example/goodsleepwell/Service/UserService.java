@@ -9,10 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -146,27 +143,30 @@ public class UserService {
 
 
     @Async("three")
-    public CompletableFuture<DefaultRes> delete(int id,String password) {
-        CompletableFuture<DefaultRes> ret = CompletableFuture.supplyAsync(()->{
+    public CompletableFuture<DefaultRes> delete(int id, String password) {
+        CompletableFuture<DefaultRes> ret = CompletableFuture.supplyAsync(() -> {
             try {
-                userMapper.delete(password,id);
-            }
-            catch (Exception e) {
-                return DefaultRes.res(StatusCode.DB_ERROR,ResponseMessage.DB_ERROR);
+                userMapper.delete(password, id);
+            } catch (Exception e) {
+                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }
             return null;
-        },three);
-        if(ret.join() == null) {
-            return CompletableFuture.supplyAsync(()->DefaultRes.res(StatusCode.OK,ResponseMessage.DELETE_USER));
+        }, three);
+        if (ret.join() == null) {
+            return CompletableFuture.supplyAsync(() -> DefaultRes.res(StatusCode.OK, ResponseMessage.DELETE_USER));
         }
         return ret;
     }
+
     /*
      */
     @Async("two")
     public CompletableFuture<DefaultRes> save(sleepWellBoardContent boardContent) throws JSONException {
         CompletableFuture<DefaultRes> ret = CompletableFuture.supplyAsync(() -> {
             ResponseEntity<String> ret2 = apiAxiosWithNode(boardContent, containsApi(boardContent.getLinkUrl()));
+            if (ret2.getStatusCode() == HttpStatus.BAD_REQUEST) {
+                return boardContent;
+            }
             String body = ret2.getBody();
             Gson gson = new Gson();
             JsonObject json = gson.fromJson(body, JsonObject.class);
@@ -179,6 +179,9 @@ public class UserService {
             boardContent.setFireCount(0);
             return boardContent;
         }, one).thenApply(s -> {
+            if (boardContent.getLinkChannel().equals("")) {
+                return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.INTERNAL_SERVER_ERROR);
+            }
             try {
                 userMapper.save(s);
             } catch (Exception e) {
@@ -206,7 +209,8 @@ public class UserService {
         map.put("link", Collections.singletonList(boardContent.getLinkUrl()));
         RestTemplate rt = new RestTemplate();
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        if (choice == 1) return rt.postForEntity("http://module:3000/axios/youtube", request, String.class);
-        else return rt.postForEntity("http://module:3000/axios/twitch", request, String.class);
+        if (choice == 1) return rt.postForEntity("http://localhost:3000/axios/youtube", request, String.class);
+        else if (choice == 2) return rt.postForEntity("http://localhost:3000/axios/twitch", request, String.class);
+        else return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }
