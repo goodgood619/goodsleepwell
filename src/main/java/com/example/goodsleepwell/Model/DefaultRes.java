@@ -2,6 +2,7 @@ package com.example.goodsleepwell.Model;
 
 import com.example.goodsleepwell.Utils.ResponseMessage;
 import com.example.goodsleepwell.Utils.StatusCode;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,6 +10,8 @@ import lombok.NoArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.scheduling.annotation.EnableAsync;
 
+
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
 @Builder
 @NoArgsConstructor

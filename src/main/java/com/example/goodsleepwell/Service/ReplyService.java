@@ -7,7 +7,10 @@ import com.example.goodsleepwell.Utils.ResponseMessage;
 import com.example.goodsleepwell.Utils.StatusCode;
 import com.example.goodsleepwell.mapper.ReReplyMapper;
 import com.example.goodsleepwell.mapper.ReplyMapper;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -19,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Slf4j
 @Service
 @EnableAsync
@@ -48,23 +53,34 @@ public class ReplyService {
         }).thenApply(s -> {
             if (s.join().size() == 0) return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
             int cnt = 1;
+            JSONArray jsonArray = new JSONArray();
             for (sleepBoardReply reply : s.join()) {
                 try {
+                    JSONObject json1 = new JSONObject();
                     StringBuilder sb1 = new StringBuilder("rid");
                     sb1.append(cnt);
+                    json1.put("rid", reply.getRid());
+                    json1.put("id", reply.getId());
+                    json1.put("writter", reply.getWriter());
+                    log.info(json1.toString());
                     map.put(sb1.toString(), reply);
                     StringBuilder sb2 = new StringBuilder("rrid");
                     sb2.append(cnt);
                     List<sleepBoardRereply> ret2 = reReplyMapper.findAll(reply.getRid());
-                    if (!ret2.isEmpty()) map.put(sb2.toString(), ret2);
+                    if (!ret2.isEmpty()) {
+                        json1.put("대댓글", ret2);
+                        map.put(sb2.toString(), ret2);
+                    }
+                    jsonArray.put(json1);
                     cnt++;
+                    log.info(json1.toString());
                     log.info(reReplyMapper.findAll(reply.getRid()).toString());
                 } catch (Exception e) {
                     return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
                 }
             }
             s.join();
-            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_USER, map);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_USER,jsonArray.toString());
         });
         return ret;
     }
