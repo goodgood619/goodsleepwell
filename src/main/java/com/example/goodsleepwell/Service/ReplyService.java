@@ -62,25 +62,21 @@ public class ReplyService {
                     json1.put("rid", reply.getRid());
                     json1.put("id", reply.getId());
                     json1.put("writter", reply.getWriter());
-                    log.info(json1.toString());
-                    map.put(sb1.toString(), reply);
-                    StringBuilder sb2 = new StringBuilder("rrid");
-                    sb2.append(cnt);
+                    json1.put("replyContent", reply.getReplyContent());
+                    json1.put("likecnt", reply.getLikeCount());
+                    json1.put("firecnt", reply.getFireCount());
                     List<sleepBoardRereply> ret2 = reReplyMapper.findAll(reply.getRid());
                     if (!ret2.isEmpty()) {
                         json1.put("대댓글", ret2);
-                        map.put(sb2.toString(), ret2);
                     }
                     jsonArray.put(json1);
                     cnt++;
-                    log.info(json1.toString());
-                    log.info(reReplyMapper.findAll(reply.getRid()).toString());
                 } catch (Exception e) {
                     return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
                 }
             }
             s.join();
-            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_USER,jsonArray.toString());
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_USER, jsonArray.toString());
         });
         return ret;
     }

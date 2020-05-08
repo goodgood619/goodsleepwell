@@ -8,7 +8,8 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-    @Select("select * from sleepBoardContent")
+    @Select("select a.id,a.writer,a.writerTitle,a.linkUrl,a.linkTitle,a.linkChannel,a.likeCount,a.dislikeCount,a.fireCount," +
+            "a.thumbnailUrl,a.boardIp from sleepBoardContent as a")
     List<sleepWellBoardContent> findAll();
 
     @Insert("insert into sleepBoardContent(writer,writerTitle,linkUrl,linkTitle,linkChannel,likeCount,dislikeCount,fireCount,thumbnailUrl,boardIp,password) " +
