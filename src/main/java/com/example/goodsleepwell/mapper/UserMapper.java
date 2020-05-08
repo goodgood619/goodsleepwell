@@ -1,6 +1,5 @@
 package com.example.goodsleepwell.mapper;
 
-import com.example.goodsleepwell.Model.sleepLikeCheck;
 import com.example.goodsleepwell.Model.sleepWellBoardContent;
 import org.apache.ibatis.annotations.*;
 

@@ -197,7 +197,7 @@ public class UserService {
     }
 
     private int containsApi(String s) {
-        if (s.contains("youtube") || s.contains("youtu.be")) return 1;
+        if (s.contains("youtube.com/watch") || s.contains("youtu.be")) return 1;
         if (s.contains("twitch")) return 2;
         return 0;
     }

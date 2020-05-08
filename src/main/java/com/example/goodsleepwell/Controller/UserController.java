@@ -60,6 +60,7 @@ public class UserController {
         }
         catch (Exception e) {
             log.info("error");
+            log.info(e.getMessage());
             return CompletableFuture.completedFuture(new ResponseEntity<>(FAIL_DEFAULT_RES,HttpStatus.INTERNAL_SERVER_ERROR));
         }
     }
