@@ -57,8 +57,6 @@ public class ReplyService {
             for (sleepBoardReply reply : s.join()) {
                 try {
                     JSONObject json1 = new JSONObject();
-                    StringBuilder sb1 = new StringBuilder("rid");
-                    sb1.append(cnt);
                     json1.put("rid", reply.getRid());
                     json1.put("id", reply.getId());
                     json1.put("writter", reply.getWriter());
@@ -67,10 +65,21 @@ public class ReplyService {
                     json1.put("firecnt", reply.getFireCount());
                     List<sleepBoardRereply> ret2 = reReplyMapper.findAll(reply.getRid());
                     if (!ret2.isEmpty()) {
-                        json1.put("대댓글", ret2);
+                        JSONArray js2 = new JSONArray();
+                        for(sleepBoardRereply el : ret2) {
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("rrid",el.getRrid());
+                            jsonObject.put("rid",el.getRid());
+                            jsonObject.put("likeCount",el.getLikeCount());
+                            jsonObject.put("fireCount",el.getFireCount());
+                            jsonObject.put("writer",el.getWriter());
+                            jsonObject.put("reReplyContent",el.getRereplyContent());
+                            jsonObject.put("boardIp",el.getBoardIp());
+                            js2.put(jsonObject);
+                        }
+                        json1.put("대댓글",js2);
                     }
                     jsonArray.put(json1);
-                    cnt++;
                 } catch (Exception e) {
                     return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
                 }
