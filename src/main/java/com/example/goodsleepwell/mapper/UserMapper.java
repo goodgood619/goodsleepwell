@@ -41,4 +41,7 @@ public interface UserMapper {
 
     @Delete("delete from sleepBoardContent where id = #{id} and password = #{password}")
     void delete(@Param("password") final String password,@Param("id") final int id);
+
+    @Delete("delete from sleepLikeCheck where id = #{id}")
+    void likeBoardDelete(@Param("id") final int id);
 }

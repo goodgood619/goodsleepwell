@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -66,18 +67,18 @@ public class ReplyService {
                     List<sleepBoardRereply> ret2 = reReplyMapper.findAll(reply.getRid());
                     if (!ret2.isEmpty()) {
                         JSONArray js2 = new JSONArray();
-                        for(sleepBoardRereply el : ret2) {
+                        for (sleepBoardRereply el : ret2) {
                             JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("rrid",el.getRrid());
-                            jsonObject.put("rid",el.getRid());
-                            jsonObject.put("likeCount",el.getLikeCount());
-                            jsonObject.put("fireCount",el.getFireCount());
-                            jsonObject.put("writer",el.getWriter());
-                            jsonObject.put("reReplyContent",el.getRereplyContent());
-                            jsonObject.put("boardIp",el.getBoardIp());
+                            jsonObject.put("rrid", el.getRrid());
+                            jsonObject.put("rid", el.getRid());
+                            jsonObject.put("likeCount", el.getLikeCount());
+                            jsonObject.put("fireCount", el.getFireCount());
+                            jsonObject.put("writer", el.getWriter());
+                            jsonObject.put("reReplyContent", el.getRereplyContent());
+                            jsonObject.put("boardIp", el.getBoardIp());
                             js2.put(jsonObject);
                         }
-                        json1.put("대댓글",js2);
+                        json1.put("대댓글", js2);
                     }
                     jsonArray.put(json1);
                 } catch (Exception e) {
@@ -133,5 +134,47 @@ public class ReplyService {
         if (ret.join() == null)
             return CompletableFuture.completedFuture(DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATED_USER));
         return ret;
+    }
+
+    @Async("two")
+    @Transactional
+    public CompletableFuture<Boolean> checkLike(int rid, String boardIp) {
+        CompletableFuture<Integer> ret = CompletableFuture.supplyAsync(() -> replyMapper.checkLike(boardIp, rid), two);
+        if (ret.join() == 1) return CompletableFuture.completedFuture(false);
+        return CompletableFuture.completedFuture(true);
+    }
+
+
+    @Async("two")
+    @Transactional
+    public CompletableFuture<Boolean> saveLike(int rid, String boardIp) {
+        CompletableFuture<Boolean> ret = CompletableFuture.supplyAsync(() -> {
+            try {
+                replyMapper.likeSave(boardIp, rid);
+            } catch (Exception e) {
+                log.error("{}", e.getMessage());
+                return false;
+            }
+            return true;
+        }, two);
+        if (ret.join()) return CompletableFuture.completedFuture(true);
+        return CompletableFuture.completedFuture(false);
+    }
+
+    @Async("three")
+    @Transactional
+    public CompletableFuture<DefaultRes> likeUpload(int rid) throws ExecutionException, InterruptedException {
+        CompletableFuture<DefaultRes> ret = CompletableFuture.supplyAsync(() -> {
+            try {
+                replyMapper.likeUpdate(rid);
+            } catch (Exception e) {
+                log.error("{}", e.getMessage());
+                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+            }
+            return null;
+        });
+        if (ret.get() == null) {
+            return CompletableFuture.supplyAsync(() -> DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER));
+        } else return ret;
     }
 }

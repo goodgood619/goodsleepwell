@@ -1,10 +1,7 @@
 package com.example.goodsleepwell.mapper;
 
 import com.example.goodsleepwell.Model.sleepBoardReply;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -17,8 +14,17 @@ public interface ReplyMapper {
     int checkPostorNot(@Param("boardIp") final String boardIp);
 
     @Select("select now()-(select a.registerTime from sleepBoardReply as a \n" +
-            "where boardIp = #{boardIp} order by a.registerTime desc limit 1)>=300")
+            "where boardIp = #{boardIp} order by a.registerTime desc limit 1)>=10")
     int checkPostorNot2(@Param("boardIp") final String boardIp);
+
+    @Select("select count(*) from sleepLikeReplyCheck where boardIp = #{boardIp} and rid = #{rid}")
+    int checkLike(@Param("boardIp") final String boardIp, @Param("rid") final int rid);
+
+    @Insert("insert into sleepLikeReplyCheck(likeTime,rid,boardIp) values(now(),#{rid},#{boardIp})")
+    void likeSave(@Param("boardIp") final String boardIp, @Param("rid") final int rid);
+
+    @Update("update sleepBoardReply set likeCount = likeCount+1 where rid = #{rid}")
+    void likeUpdate(@Param("rid") final int rid);
 
     @Insert("insert into sleepBoardReply(id,writer,replyContent,password,likeCount,fireCount,boardIp) " +
             "VALUES(#{reply.id}, #{reply.writer},#{reply.replyContent},#{reply.password}," +

@@ -143,10 +143,11 @@ public class UserService {
 
 
     @Async("three")
-    public CompletableFuture<DefaultRes> delete(int id, String password) {
-        CompletableFuture<DefaultRes> ret = CompletableFuture.supplyAsync(() -> {
+    public CompletableFuture<DefaultRes<?>> delete(int id, String password) {
+        CompletableFuture<DefaultRes<?>> ret = CompletableFuture.supplyAsync(() -> {
             try {
-                userMapper.delete(password, id);
+                userMapper.delete(password, id); // 게시글 제거
+                userMapper.likeBoardDelete(id); // 중복 좋아요(게시글) 제거
             } catch (Exception e) {
                 return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }

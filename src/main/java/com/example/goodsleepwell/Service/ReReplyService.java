@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Service
@@ -84,5 +85,47 @@ public class ReReplyService {
         if (ret.join() == null)
             return CompletableFuture.completedFuture(DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATED_USER));
         return ret;
+    }
+
+    @Async("two")
+    @Transactional
+    public CompletableFuture<Boolean> checkLike(int rrid, String boardIp) {
+        CompletableFuture<Integer> ret = CompletableFuture.supplyAsync(() -> rereplyMapper.checkLike(boardIp, rrid), two);
+        if (ret.join() == 1) return CompletableFuture.completedFuture(false);
+        return CompletableFuture.completedFuture(true);
+    }
+
+
+    @Async("two")
+    @Transactional
+    public CompletableFuture<Boolean> saveLike(int rrid, String boardIp) {
+        CompletableFuture<Boolean> ret = CompletableFuture.supplyAsync(() -> {
+            try {
+                rereplyMapper.likeSave(boardIp, rrid);
+            } catch (Exception e) {
+                log.error("{}", e.getMessage());
+                return false;
+            }
+            return true;
+        }, two);
+        if (ret.join()) return CompletableFuture.completedFuture(true);
+        return CompletableFuture.completedFuture(false);
+    }
+
+    @Async("three")
+    @Transactional
+    public CompletableFuture<DefaultRes> likeUpload(int rrid) throws ExecutionException, InterruptedException {
+        CompletableFuture<DefaultRes> ret = CompletableFuture.supplyAsync(() -> {
+            try {
+                rereplyMapper.likeUpdate(rrid);
+            } catch (Exception e) {
+                log.error("{}", e.getMessage());
+                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+            }
+            return null;
+        });
+        if (ret.get() == null) {
+            return CompletableFuture.supplyAsync(() -> DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER));
+        } else return ret;
     }
 }
