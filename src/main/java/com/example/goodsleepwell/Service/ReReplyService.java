@@ -128,4 +128,28 @@ public class ReReplyService {
             return CompletableFuture.supplyAsync(() -> DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER));
         } else return ret;
     }
+
+    @Async("one")
+    public CompletableFuture<Boolean> checkDelete(int rrid, String password) {
+        CompletableFuture<Integer> ret = CompletableFuture.supplyAsync(() -> rereplyMapper.checkDelete(password, rrid), one);
+        if (ret.join() == 1) return CompletableFuture.completedFuture(true);
+        return CompletableFuture.completedFuture(false);
+    }
+
+    @Async("three")
+    public CompletableFuture<DefaultRes<?>> delete(int rrid, String password) {
+        CompletableFuture<DefaultRes<?>> ret = CompletableFuture.supplyAsync(() -> {
+            try {
+                rereplyMapper.delete(password, rrid); // 게시글 제거
+                rereplyMapper.likeBoardDelete(rrid); // 중복 좋아요(게시글) 제거
+            } catch (Exception e) {
+                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+            }
+            return null;
+        }, three);
+        if (ret.join() == null) {
+            return CompletableFuture.supplyAsync(() -> DefaultRes.res(StatusCode.OK, ResponseMessage.DELETE_USER));
+        }
+        return ret;
+    }
 }

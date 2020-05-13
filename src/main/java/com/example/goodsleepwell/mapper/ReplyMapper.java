@@ -32,4 +32,12 @@ public interface ReplyMapper {
     void save(@Param("reply") final sleepBoardReply reply);
 
 
+    @Select("select count(*) from sleepBoardReply where rid = #{rid} and password = #{password}")
+    int checkDelete(@Param("password") final String password, @Param("rid") final int rid);
+
+    @Delete("delete from sleepBoardReply where rid = #{rid} and password = #{password}")
+    void delete(@Param("password") final String password,@Param("rid") final int rid);
+
+    @Delete("delete from sleepLikeReplyCheck where rid = #{rid}")
+    void likeBoardDelete(@Param("rid") final int rid);
 }

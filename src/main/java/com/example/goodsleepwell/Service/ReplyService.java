@@ -177,4 +177,28 @@ public class ReplyService {
             return CompletableFuture.supplyAsync(() -> DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER));
         } else return ret;
     }
+
+    @Async("one")
+    public CompletableFuture<Boolean> checkDelete(int rid, String password) {
+        CompletableFuture<Integer> ret = CompletableFuture.supplyAsync(() -> replyMapper.checkDelete(password, rid), one);
+        if (ret.join() == 1) return CompletableFuture.completedFuture(true);
+        return CompletableFuture.completedFuture(false);
+    }
+
+    @Async("three")
+    public CompletableFuture<DefaultRes<?>> delete(int rid, String password) {
+        CompletableFuture<DefaultRes<?>> ret = CompletableFuture.supplyAsync(() -> {
+            try {
+                replyMapper.delete(password, rid); // 게시글 제거
+                replyMapper.likeBoardDelete(rid); // 중복 좋아요(게시글) 제거
+            } catch (Exception e) {
+                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+            }
+            return null;
+        }, three);
+        if (ret.join() == null) {
+            return CompletableFuture.supplyAsync(() -> DefaultRes.res(StatusCode.OK, ResponseMessage.DELETE_USER));
+        }
+        return ret;
+    }
 }

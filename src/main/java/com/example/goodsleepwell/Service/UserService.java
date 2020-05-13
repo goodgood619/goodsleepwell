@@ -117,6 +117,23 @@ public class UserService {
     }
 
     @Async("three")
+    public CompletableFuture<DefaultRes<?>> delete(int id, String password) {
+        CompletableFuture<DefaultRes<?>> ret = CompletableFuture.supplyAsync(() -> {
+            try {
+                userMapper.delete(password, id); // 게시글 제거
+                userMapper.likeBoardDelete(id); // 중복 좋아요(게시글) 제거
+            } catch (Exception e) {
+                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+            }
+            return null;
+        }, three);
+        if (ret.join() == null) {
+            return CompletableFuture.supplyAsync(() -> DefaultRes.res(StatusCode.OK, ResponseMessage.DELETE_USER));
+        }
+        return ret;
+    }
+
+    @Async("three")
     @Transactional
     public CompletableFuture<Boolean> checkPostorNot(String boardIp) {
         CompletableFuture<Integer> ret = CompletableFuture.supplyAsync(() -> {
@@ -139,24 +156,6 @@ public class UserService {
             if (ret.join() == 1) return CompletableFuture.completedFuture(true);
             return CompletableFuture.completedFuture(false);
         }
-    }
-
-
-    @Async("three")
-    public CompletableFuture<DefaultRes<?>> delete(int id, String password) {
-        CompletableFuture<DefaultRes<?>> ret = CompletableFuture.supplyAsync(() -> {
-            try {
-                userMapper.delete(password, id); // 게시글 제거
-                userMapper.likeBoardDelete(id); // 중복 좋아요(게시글) 제거
-            } catch (Exception e) {
-                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
-            }
-            return null;
-        }, three);
-        if (ret.join() == null) {
-            return CompletableFuture.supplyAsync(() -> DefaultRes.res(StatusCode.OK, ResponseMessage.DELETE_USER));
-        }
-        return ret;
     }
 
     /*

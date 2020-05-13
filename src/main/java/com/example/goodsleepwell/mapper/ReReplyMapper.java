@@ -30,4 +30,13 @@ public interface ReReplyMapper {
             "VALUES(#{reReply.rid}, #{reReply.writer},#{reReply.rereplyContent},#{reReply.password}," +
             "#{reReply.likeCount},#{reReply.fireCount},#{reReply.boardIp})")
     void save(@Param("reReply") final sleepBoardRereply reReply);
+
+    @Select("select count(*) from sleepBoardRereply where rrid = #{rrid} and password = #{password}")
+    int checkDelete(@Param("password") final String password, @Param("rrid") final int rrid);
+
+    @Delete("delete from sleepBoardRereply where rrid = #{rrid} and password = #{password}")
+    void delete(@Param("password") final String password,@Param("rrid") final int rrid);
+
+    @Delete("delete from sleepLikeReReplyCheck where rrid = #{rrid}")
+    void likeBoardDelete(@Param("rrid") final int rrid);
 }

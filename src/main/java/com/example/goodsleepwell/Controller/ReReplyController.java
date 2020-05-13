@@ -9,10 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -58,6 +55,20 @@ public class ReReplyController {
                 CompletableFuture.supplyAsync(() -> reReplyService.saveLike(rrid, boardIp));
                 return CompletableFuture.completedFuture(new ResponseEntity<>(reReplyService.likeUpload(rrid).get(), HttpStatus.OK));
             } else return CompletableFuture.completedFuture(new ResponseEntity<>(FAIL_LIKE, HttpStatus.NOT_ACCEPTABLE));
+        } catch (Exception e) {
+            return CompletableFuture.completedFuture(new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR));
+        }
+    }
+
+    @Async("threadPoolTaskExecutor")
+    @DeleteMapping("delete")
+    public CompletableFuture<ResponseEntity> deleteContent(@Param("rrid") final int rrid, @RequestParam(value = "password", defaultValue = "") final String password) {
+        CompletableFuture<Boolean> ret = CompletableFuture.supplyAsync(() -> reReplyService.checkDelete(rrid, password), one).join();
+        try {
+            if (ret.join()) {
+                return CompletableFuture.completedFuture(new ResponseEntity<>(reReplyService.delete(rrid, password).get(), HttpStatus.OK));
+            } else
+                return CompletableFuture.completedFuture(new ResponseEntity<>(FAIL_DELETE, HttpStatus.NOT_ACCEPTABLE));
         } catch (Exception e) {
             return CompletableFuture.completedFuture(new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR));
         }
