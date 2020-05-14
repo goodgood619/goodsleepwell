@@ -90,6 +90,20 @@ public class UserController {
     }
 
     @Async("threadPoolTaskExecutor")
+    @PutMapping("fire")
+    public CompletableFuture<ResponseEntity> fireUpdate(@Param("id") final int id,@Param("boardIp") final String boardIp) {
+        CompletableFuture<Boolean> ret = CompletableFuture.supplyAsync(() -> userService.checkFire(id, boardIp), one).join();
+        try {
+            if (ret.join()) {
+                CompletableFuture.supplyAsync(() -> userService.saveFire(id, boardIp));
+                return CompletableFuture.completedFuture(new ResponseEntity<>(userService.fireUpload(id).get(), HttpStatus.OK));
+            } else return CompletableFuture.completedFuture(new ResponseEntity<>(FAIL_LIKE, HttpStatus.NOT_ACCEPTABLE));
+        } catch (Exception e) {
+            return CompletableFuture.completedFuture(new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR));
+        }
+    }
+
+    @Async("threadPoolTaskExecutor")
     @DeleteMapping("delete")
     public CompletableFuture<ResponseEntity> deleteContent(@Param("id") final int id, @RequestParam(value = "password", defaultValue = "") final String password) {
         CompletableFuture<Boolean> ret = CompletableFuture.supplyAsync(() -> userService.checkDelete(id, password), one).join();

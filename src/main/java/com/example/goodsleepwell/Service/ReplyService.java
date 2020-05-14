@@ -178,6 +178,47 @@ public class ReplyService {
         } else return ret;
     }
 
+    @Async("two")
+    @Transactional
+    public CompletableFuture<Boolean> checkFire(int rid,String boardIp) {
+        CompletableFuture<Integer> ret = CompletableFuture.supplyAsync(() -> replyMapper.checkFire(boardIp, rid), two);
+        if (ret.join() == 1) return CompletableFuture.completedFuture(false);
+        return CompletableFuture.completedFuture(true);
+    }
+
+    @Async("two")
+    @Transactional
+    public CompletableFuture<Boolean> saveFire(int rid,String boardIp) {
+        CompletableFuture<Boolean> ret = CompletableFuture.supplyAsync(() -> {
+            try {
+                replyMapper.fireSave(boardIp, rid);
+            } catch (Exception e) {
+                log.error("{}", e.getMessage());
+                return false;
+            }
+            return true;
+        }, two);
+        if (ret.join()) return CompletableFuture.completedFuture(true);
+        return CompletableFuture.completedFuture(false);
+    }
+
+    @Async("three")
+    @Transactional
+    public CompletableFuture<DefaultRes> fireUpload(int rid) throws ExecutionException, InterruptedException {
+        CompletableFuture<DefaultRes> ret = CompletableFuture.supplyAsync(() -> {
+            try {
+                replyMapper.fireUpdate(rid);
+            } catch (Exception e) {
+                log.error("{}", e.getMessage());
+                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+            }
+            return null;
+        });
+        if (ret.get() == null) {
+            return CompletableFuture.supplyAsync(() -> DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER));
+        } else return ret;
+    }
+
     @Async("one")
     public CompletableFuture<Boolean> checkDelete(int rid, String password) {
         CompletableFuture<Integer> ret = CompletableFuture.supplyAsync(() -> replyMapper.checkDelete(password, rid), one);
@@ -190,7 +231,6 @@ public class ReplyService {
         CompletableFuture<DefaultRes<?>> ret = CompletableFuture.supplyAsync(() -> {
             try {
                 replyMapper.delete(password, rid); // 게시글 제거
-                replyMapper.likeBoardDelete(rid); // 중복 좋아요(게시글) 제거
             } catch (Exception e) {
                 return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }

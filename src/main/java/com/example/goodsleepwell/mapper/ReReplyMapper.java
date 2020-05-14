@@ -26,6 +26,15 @@ public interface ReReplyMapper {
     @Update("update sleepBoardRereply set likeCount = likeCount+1 where rrid = #{rrid}")
     void likeUpdate(@Param("rrid") final int rrid);
 
+    @Select("select count(*) from sleepFireReReplyCheck where boardIp = #{boardIp} and rrid = #{rrid}")
+    int checkFire(@Param("boardIp") final String boardIp,@Param("rrid") final int rrid);
+
+    @Insert("insert into sleepFireReReplyCheck(fireTime,rrid,boardIp) values(now(),#{rrid},#{boardIp})")
+    void fireSave(@Param("boardIp") final String boardIp, @Param("rrid") final int rrid);
+
+    @Update("update sleepBoardRereply set fireCount = fireCount+1 where rrid = #{rrid}")
+    void fireUpdate(@Param("rrid") final int rrid);
+
     @Insert("insert into sleepBoardRereply(rid,writer,rereplyContent,password,likeCount,fireCount,boardIp) " +
             "VALUES(#{reReply.rid}, #{reReply.writer},#{reReply.rereplyContent},#{reReply.password}," +
             "#{reReply.likeCount},#{reReply.fireCount},#{reReply.boardIp})")
@@ -37,6 +46,4 @@ public interface ReReplyMapper {
     @Delete("delete from sleepBoardRereply where rrid = #{rrid} and password = #{password}")
     void delete(@Param("password") final String password,@Param("rrid") final int rrid);
 
-    @Delete("delete from sleepLikeReReplyCheck where rrid = #{rrid}")
-    void likeBoardDelete(@Param("rrid") final int rrid);
 }

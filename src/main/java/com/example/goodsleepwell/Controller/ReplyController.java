@@ -85,4 +85,19 @@ public class ReplyController {
             return CompletableFuture.completedFuture(new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR));
         }
     }
+
+    @Async("threadPoolTaskExecutor")
+    @PutMapping("fire")
+    public CompletableFuture<ResponseEntity> fireUpdate(@Param("rid") final int rid,@Param("boardIp") final String boardIp) {
+        CompletableFuture<Boolean> ret = CompletableFuture.supplyAsync(() -> replyService.checkFire(rid, boardIp), one).join();
+        try {
+            if (ret.join()) {
+                CompletableFuture.supplyAsync(() -> replyService.saveFire(rid, boardIp));
+                return CompletableFuture.completedFuture(new ResponseEntity<>(replyService.fireUpload(rid).get(), HttpStatus.OK));
+            } else return CompletableFuture.completedFuture(new ResponseEntity<>(FAIL_LIKE, HttpStatus.NOT_ACCEPTABLE));
+        } catch (Exception e) {
+            return CompletableFuture.completedFuture(new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR));
+        }
+    }
+
 }

@@ -32,12 +32,19 @@ public interface ReplyMapper {
     void save(@Param("reply") final sleepBoardReply reply);
 
 
+    @Select("select count(*) from sleepFireReplyCheck where boardIp = #{boardIp} and rid = #{rid}")
+    int checkFire(@Param("boardIp") final String boardIp,@Param("rid") final int rid);
+
+    @Insert("insert into sleepFireReplyCheck(fireTime,rid,boardIp) values(now(),#{rid},#{boardIp})")
+    void fireSave(@Param("boardIp") final String boardIp, @Param("rid") final int rid);
+
+    @Update("update sleepBoardReply set fireCount = fireCount+1 where rid = #{rid}")
+    void fireUpdate(@Param("rid") final int rid);
+
     @Select("select count(*) from sleepBoardReply where rid = #{rid} and password = #{password}")
     int checkDelete(@Param("password") final String password, @Param("rid") final int rid);
 
     @Delete("delete from sleepBoardReply where rid = #{rid} and password = #{password}")
     void delete(@Param("password") final String password,@Param("rid") final int rid);
 
-    @Delete("delete from sleepLikeReplyCheck where rid = #{rid}")
-    void likeBoardDelete(@Param("rid") final int rid);
 }
