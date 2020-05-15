@@ -10,6 +10,7 @@ import com.example.goodsleepwell.mapper.ReplyMapper;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -43,7 +44,6 @@ public class ReplyService {
 
     @Async("one")
     public CompletableFuture<DefaultRes> getAllReplylist(int id) {
-        Map<Object, Object> map = new HashMap<>();
         CompletableFuture<DefaultRes> ret = CompletableFuture.supplyAsync(() -> {
             return CompletableFuture.supplyAsync(() -> replyMapper.findAll(id), three);
         }, one).thenApply(s -> {
@@ -53,7 +53,6 @@ public class ReplyService {
             return s;
         }).thenApply(s -> {
             if (s.join().size() == 0) return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
-            int cnt = 1;
             JSONArray jsonArray = new JSONArray();
             for (sleepBoardReply reply : s.join()) {
                 try {
@@ -79,6 +78,7 @@ public class ReplyService {
                             js2.put(jsonObject);
                         }
                         json1.put("대댓글", js2);
+                        json1.put("reReplyCnt", ret2.size());
                     }
                     jsonArray.put(json1);
                 } catch (Exception e) {
@@ -86,6 +86,13 @@ public class ReplyService {
                 }
             }
             s.join();
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("replyCnt",s.join().size());
+                jsonArray.put(jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_USER, jsonArray.toString());
         });
         return ret;
@@ -180,7 +187,7 @@ public class ReplyService {
 
     @Async("two")
     @Transactional
-    public CompletableFuture<Boolean> checkFire(int rid,String boardIp) {
+    public CompletableFuture<Boolean> checkFire(int rid, String boardIp) {
         CompletableFuture<Integer> ret = CompletableFuture.supplyAsync(() -> replyMapper.checkFire(boardIp, rid), two);
         if (ret.join() == 1) return CompletableFuture.completedFuture(false);
         return CompletableFuture.completedFuture(true);
@@ -188,7 +195,7 @@ public class ReplyService {
 
     @Async("two")
     @Transactional
-    public CompletableFuture<Boolean> saveFire(int rid,String boardIp) {
+    public CompletableFuture<Boolean> saveFire(int rid, String boardIp) {
         CompletableFuture<Boolean> ret = CompletableFuture.supplyAsync(() -> {
             try {
                 replyMapper.fireSave(boardIp, rid);
