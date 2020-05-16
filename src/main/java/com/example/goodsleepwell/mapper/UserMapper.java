@@ -12,6 +12,10 @@ public interface UserMapper {
             "a.thumbnailUrl,a.boardIp from sleepBoardContent as a")
     List<sleepWellBoardContent> findAll();
 
+    @Select("select count(*) from sleepBoardReply where id = #{id}")
+    int replyCount(@Param("id") final int id);
+
+
     @Select("select count(*) from sleepBoardContent where boardIp = #{boardIp}")
     int checkPostorNot(@Param("boardIp") final String boardIp);
 

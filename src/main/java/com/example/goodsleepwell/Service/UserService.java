@@ -8,7 +8,9 @@ import com.example.goodsleepwell.mapper.UserMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -45,7 +47,29 @@ public class UserService {
             if (s.join().isEmpty()) {
                 return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
             }
-            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_USER, s.join());
+            JSONArray jsonArray = new JSONArray();
+            for(sleepWellBoardContent value : s.join()) {
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    int replyCnt = userMapper.replyCount(value.getId());
+                    jsonObject.put("id",value.getId());
+                    jsonObject.put("linkUrl",value.getLinkUrl());
+                    jsonObject.put("linkChannel",value.getLinkChannel());
+                    jsonObject.put("thumbnailUrl",value.getThumbnailUrl());
+                    jsonObject.put("dislikeCount",value.getDislikeCount());
+                    jsonObject.put("fireCount",value.getFireCount());
+                    jsonObject.put("likeCount",value.getLikeCount());
+                    jsonObject.put("boardIp",value.getBoardIp());
+                    jsonObject.put("linkTitle",value.getLinkTitle());
+                    jsonObject.put("writer",value.getWriter());
+                    jsonObject.put("writerTitle",value.getWriterTitle());
+                    jsonObject.put("replyCnt",replyCnt);
+                    jsonArray.put(jsonObject);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_USER,jsonArray.toString());
         });
     }
 
