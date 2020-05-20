@@ -40,36 +40,41 @@ public class UserService {
     }
 
     @Async("one")
-    public CompletableFuture<DefaultRes> getAllList() {
+    @Transactional
+    public CompletableFuture<DefaultRes> getAllList(int page,int pageChoice) {
         return CompletableFuture.supplyAsync(() -> {
-            return CompletableFuture.supplyAsync(() -> userMapper.findAll(), three);
+            if(pageChoice==0) {
+                return CompletableFuture.supplyAsync(() -> userMapper.findAllLikeOrder(page*20,pageChoice,20), three);
+            }
+            else return CompletableFuture.supplyAsync(() -> userMapper.findAllrecentOrder(page*20,pageChoice,20), three);
         }, one).thenApply(s -> {
             if (s.join().isEmpty()) {
                 return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
             }
             JSONArray jsonArray = new JSONArray();
-            for(sleepWellBoardContent value : s.join()) {
+            for (sleepWellBoardContent value : s.join()) {
                 JSONObject jsonObject = new JSONObject();
                 try {
                     int replyCnt = userMapper.replyCount(value.getId());
-                    jsonObject.put("id",value.getId());
-                    jsonObject.put("linkUrl",value.getLinkUrl());
-                    jsonObject.put("linkChannel",value.getLinkChannel());
-                    jsonObject.put("thumbnailUrl",value.getThumbnailUrl());
-                    jsonObject.put("dislikeCount",value.getDislikeCount());
-                    jsonObject.put("fireCount",value.getFireCount());
-                    jsonObject.put("likeCount",value.getLikeCount());
-                    jsonObject.put("boardIp",value.getBoardIp());
-                    jsonObject.put("linkTitle",value.getLinkTitle());
-                    jsonObject.put("writer",value.getWriter());
-                    jsonObject.put("writerTitle",value.getWriterTitle());
-                    jsonObject.put("replyCnt",replyCnt);
+                    int reReplyCnt = userMapper.reReplyCount(value.getId());
+                    jsonObject.put("id", value.getId());
+                    jsonObject.put("linkUrl", value.getLinkUrl());
+                    jsonObject.put("linkChannel", value.getLinkChannel());
+                    jsonObject.put("thumbnailUrl", value.getThumbnailUrl());
+                    jsonObject.put("dislikeCount", value.getDislikeCount());
+                    jsonObject.put("fireCount", value.getFireCount());
+                    jsonObject.put("likeCount", value.getLikeCount());
+                    jsonObject.put("boardIp", value.getBoardIp());
+                    jsonObject.put("linkTitle", value.getLinkTitle());
+                    jsonObject.put("writer", value.getWriter());
+                    jsonObject.put("writerTitle", value.getWriterTitle());
+                    jsonObject.put("replyCnt", replyCnt + reReplyCnt);
                     jsonArray.put(jsonObject);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_USER,jsonArray.toString());
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_USER, jsonArray.toString());
         });
     }
 
@@ -135,7 +140,7 @@ public class UserService {
 
     @Async("two")
     @Transactional
-    public CompletableFuture<Boolean> checkFire(int id,String boardIp) {
+    public CompletableFuture<Boolean> checkFire(int id, String boardIp) {
         CompletableFuture<Integer> ret = CompletableFuture.supplyAsync(() -> userMapper.checkFire(boardIp, id), two);
         if (ret.join() == 1) return CompletableFuture.completedFuture(false);
         return CompletableFuture.completedFuture(true);
@@ -143,7 +148,7 @@ public class UserService {
 
     @Async("two")
     @Transactional
-    public CompletableFuture<Boolean> saveFire(int id,String boardIp) {
+    public CompletableFuture<Boolean> saveFire(int id, String boardIp) {
         CompletableFuture<Boolean> ret = CompletableFuture.supplyAsync(() -> {
             try {
                 userMapper.fireSave(boardIp, id);
@@ -173,7 +178,6 @@ public class UserService {
             return CompletableFuture.supplyAsync(() -> DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER));
         } else return ret;
     }
-
 
 
     @Async("one")

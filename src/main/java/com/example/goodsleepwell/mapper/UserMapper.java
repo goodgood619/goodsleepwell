@@ -9,8 +9,15 @@ import java.util.List;
 public interface UserMapper {
 
     @Select("select a.id,a.writer,a.writerTitle,a.linkUrl,a.linkTitle,a.linkChannel,a.likeCount,a.dislikeCount,a.fireCount," +
-            "a.thumbnailUrl,a.boardIp from sleepBoardContent as a")
-    List<sleepWellBoardContent> findAll();
+            "a.thumbnailUrl,a.boardIp from sleepBoardContent as a order by likeCount-dislikeCount desc limit #{page},#{cnt}")
+    List<sleepWellBoardContent> findAllLikeOrder(@Param("page") final int page,@Param("pageChoice") final int pageChoice,@Param("cnt") final int cnt);
+
+    @Select("select a.id,a.writer,a.writerTitle,a.linkUrl,a.linkTitle,a.linkChannel,a.likeCount,a.dislikeCount,a.fireCount," +
+            "a.thumbnailUrl,a.boardIp from sleepBoardContent as a order by registerTime desc limit #{page},#{cnt}")
+    List<sleepWellBoardContent> findAllrecentOrder(@Param("page") final int page, @Param("pageChoice") final int pageChoice,@Param("cnt") final int cnt);
+
+    @Select("select count(*) from sleepBoardRereply where id = #{id}")
+    int reReplyCount(@Param("id") final int id);
 
     @Select("select count(*) from sleepBoardReply where id = #{id}")
     int replyCount(@Param("id") final int id);

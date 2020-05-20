@@ -32,10 +32,10 @@ public class UserController {
 
     @Async("threadPoolTaskExecutor")
     @GetMapping("")
-    public CompletableFuture<ResponseEntity> getAll() {
+    public CompletableFuture<ResponseEntity> getAll(@Param("page") final int page, @Param("pageChoice") final int pageChoice) {
         CompletableFuture<ResponseEntity> result;
         try {
-            result = CompletableFuture.completedFuture(new ResponseEntity<>(userService.getAllList().get(), HttpStatus.OK));
+            result = CompletableFuture.completedFuture(new ResponseEntity<>(userService.getAllList(page,pageChoice).get(), HttpStatus.OK));
         } catch (Exception e) {
             log.error(e.getMessage());
             result = CompletableFuture.completedFuture(new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR));

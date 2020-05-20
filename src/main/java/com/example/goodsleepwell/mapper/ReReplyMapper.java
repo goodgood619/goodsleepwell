@@ -35,9 +35,9 @@ public interface ReReplyMapper {
     @Update("update sleepBoardRereply set fireCount = fireCount+1 where rrid = #{rrid}")
     void fireUpdate(@Param("rrid") final int rrid);
 
-    @Insert("insert into sleepBoardRereply(rid,writer,rereplyContent,password,likeCount,fireCount,boardIp) " +
+    @Insert("insert into sleepBoardRereply(rid,writer,rereplyContent,password,likeCount,fireCount,boardIp,id) " +
             "VALUES(#{reReply.rid}, #{reReply.writer},#{reReply.rereplyContent},#{reReply.password}," +
-            "#{reReply.likeCount},#{reReply.fireCount},#{reReply.boardIp})")
+            "#{reReply.likeCount},#{reReply.fireCount},#{reReply.boardIp},#{reReply.id})")
     void save(@Param("reReply") final sleepBoardRereply reReply);
 
     @Select("select count(*) from sleepBoardRereply where rrid = #{rrid} and password = #{password}")
