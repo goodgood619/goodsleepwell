@@ -1,14 +1,21 @@
 package com.example.goodsleepwell.mapper;
 
 import com.example.goodsleepwell.Model.sleepBoardReply;
+import com.example.goodsleepwell.Model.sleepBoardRereply;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
 @Mapper
 public interface ReplyMapper {
-    @Select("select * from sleepBoardReply where id = #{id}")
-    List<sleepBoardReply> findAll(@Param("id") final int id);
+    @Select("select * from sleepBoardReply where id = #{id} order by registerTime desc limit #{page},#{cnt}")
+    List<sleepBoardReply> findAll(@Param("id") final int id,@Param("page") final int page,@Param("cnt") final int cnt);
+
+    @Select("select * from sleepBoardReply where id = #{id} order by likeCount desc,registerTime desc")
+    List<sleepBoardReply> findBestReply(@Param("id") final int id);
+
+    @Select("select * from sleepBoardRereply where id=#{id} order by likeCount desc,registerTime desc")
+    List<sleepBoardRereply> findBestReReply(@Param("id") final int id);
 
     @Select("select count(*) from sleepBoardReply where boardIp = #{boardIp}")
     int checkPostorNot(@Param("boardIp") final String boardIp);

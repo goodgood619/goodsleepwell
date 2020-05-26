@@ -30,10 +30,10 @@ public class ReplyController {
 
     @Async("threadPoolTaskExecutor")
     @GetMapping("")
-    public CompletableFuture<ResponseEntity> getAllReply(@Param("id") final int id) {
+    public CompletableFuture<ResponseEntity> getAllReply(@Param("id") final int id,@Param("page") final int page) {
         CompletableFuture<ResponseEntity> result;
         try {
-            result = CompletableFuture.completedFuture(new ResponseEntity<>(replyService.getAllReplylist(id).get(), HttpStatus.OK));
+            result = CompletableFuture.completedFuture(new ResponseEntity<>(replyService.getAllReplylist(id,page).get(), HttpStatus.OK));
         } catch (Exception e) {
             log.error(e.getMessage());
             result = CompletableFuture.completedFuture(new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR));
@@ -41,6 +41,18 @@ public class ReplyController {
         return result;
     }
 
+    @Async("threadPoolTaskExecutor")
+    @GetMapping("best")
+    public CompletableFuture<ResponseEntity> getBestReply(@Param("id") final int id) {
+        CompletableFuture<ResponseEntity> result;
+        try {
+            result = CompletableFuture.completedFuture(new ResponseEntity<>(replyService.getBestReply(id).join(),HttpStatus.OK));
+        }
+        catch (Exception e) {
+            result = CompletableFuture.completedFuture(new ResponseEntity<>(FAIL_DEFAULT_RES,HttpStatus.INTERNAL_SERVER_ERROR));
+        }
+        return result;
+    }
     @Async("threadPoolTaskExecutor")
     @PostMapping("")
     public CompletableFuture<ResponseEntity> replyUpload(sleepBoardReply reply) {
