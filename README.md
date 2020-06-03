@@ -14,7 +14,7 @@ Android App으로부터 들어오는 requests들을 처리함과 동시에 서�
 
 ![아키텍쳐](/assets/sleepwell_architecture.png)
 
-3. 설치
+3. 설치  
 이 링크를 통해 들어가서 다운을 받아주세요
 
 [https://play.google.com/store/apps/details?id=practice.kotlin.com.sleepwell](https://play.google.com/store/apps/details?id=practice.kotlin.com.sleepwell)
