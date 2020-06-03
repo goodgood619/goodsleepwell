@@ -2,6 +2,7 @@ package com.example.goodsleepwell.mapper;
 
 import com.example.goodsleepwell.Model.sleepWellBoardContent;
 import org.apache.ibatis.annotations.*;
+import org.json.JSONObject;
 
 import java.util.List;
 

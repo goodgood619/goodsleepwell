@@ -117,7 +117,7 @@ public class UserService {
     public CompletableFuture<Boolean> checkLike(int id, String boardIp) {
         CompletableFuture<Integer> ret = CompletableFuture.supplyAsync(() -> userMapper.checkLike(boardIp, id), two);
         if (ret.join() == 1) return CompletableFuture.completedFuture(false);
-        return CompletableFuture.completedFuture(true);
+        else return CompletableFuture.completedFuture(true);
     }
 
 
@@ -143,7 +143,7 @@ public class UserService {
     public CompletableFuture<Boolean> checkFire(int id, String boardIp) {
         CompletableFuture<Integer> ret = CompletableFuture.supplyAsync(() -> userMapper.checkFire(boardIp, id), two);
         if (ret.join() == 1) return CompletableFuture.completedFuture(false);
-        return CompletableFuture.completedFuture(true);
+        else return CompletableFuture.completedFuture(true);
     }
 
     @Async("two")
