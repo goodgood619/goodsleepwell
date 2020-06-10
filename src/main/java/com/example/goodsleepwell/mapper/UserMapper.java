@@ -17,6 +17,10 @@ public interface UserMapper {
             "a.thumbnailUrl,a.boardIp from sleepBoardContent as a order by registerTime desc limit #{page},#{cnt}")
     List<sleepWellBoardContent> findAllrecentOrder(@Param("page") final int page, @Param("pageChoice") final int pageChoice,@Param("cnt") final int cnt);
 
+    @Select("SELECT * FROM sleepBoardContent as f\n" +
+            "order by round((f.likeCount-f.dislikeCount+0.1+(select count(*) from sleepBoardReply as b where b.id = f.id)*0.1)/(now()-(select a.registerTime from sleepBoardContent as a where a.id = f.id)),10000) desc limit #{page}, #{cnt}")
+    List<sleepWellBoardContent> findAllHotOrder(@Param("page") final int page, @Param("pageChoice") final int pageChoice,@Param("cnt") final int cnt);
+
     @Select("select count(*) from sleepBoardRereply where id = #{id}")
     int reReplyCount(@Param("id") final int id);
 

@@ -46,7 +46,8 @@ public class UserService {
             if(pageChoice==0) {
                 return CompletableFuture.supplyAsync(() -> userMapper.findAllLikeOrder(page*20,pageChoice,20), three);
             }
-            else return CompletableFuture.supplyAsync(() -> userMapper.findAllrecentOrder(page*20,pageChoice,20), three);
+            else if(pageChoice == 1) return CompletableFuture.supplyAsync(() -> userMapper.findAllrecentOrder(page*20,pageChoice,20), three);
+            else return CompletableFuture.supplyAsync(() -> userMapper.findAllHotOrder(page*20,pageChoice,20), three);
         }, one).thenApply(s -> {
             if (s.join().isEmpty()) {
                 return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
