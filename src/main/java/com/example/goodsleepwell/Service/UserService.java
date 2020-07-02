@@ -241,9 +241,7 @@ public class UserService {
             String body = ret2.getBody();
             Gson gson = new Gson();
             JsonObject json = gson.fromJson(body, JsonObject.class);
-            boardContent.setLinkChannel(json.get("linkChannel").getAsString());
             boardContent.setLinkUrl(json.get("linkAddress").getAsString());
-            boardContent.setLinkTitle(json.get("linkTitle").getAsString());
             boardContent.setThumbnailUrl(json.get("thumbnailUrl").getAsString());
             boardContent.setLikeCount(0);
             boardContent.setDislikeCount(0);
@@ -251,6 +249,7 @@ public class UserService {
             return boardContent;
         }, one).thenApply(s -> {
             if (boardContent.getLinkChannel().equals("")) {
+                log.info(boardContent.getLinkChannel());
                 return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.INTERNAL_SERVER_ERROR);
             }
             try {
