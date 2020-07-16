@@ -31,9 +31,7 @@ public class ReReplyController {
     @Async("threadPoolTaskExecutor")
     @PostMapping("")
     public CompletableFuture<ResponseEntity> reReplyUpload(sleepBoardRereply rereply) {
-        CompletableFuture<Boolean> ret = CompletableFuture.supplyAsync(() -> {
-            return reReplyService.checkPostorNot(rereply.getBoardIp());
-        }, one).join();
+        CompletableFuture<Boolean> ret = CompletableFuture.supplyAsync(() -> reReplyService.checkPostorNot(rereply.getBoardIp()), one).join();
         try {
             log.info("try");
             if (ret.get()) {
