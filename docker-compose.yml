@@ -1,21 +1,13 @@
 version: "3"
 services:
-  server:
-    build:
-      dockerfile: Dockerfile
-      context: .
-    networks:
-      - sleep
-    ports:
-      - "8080:8080"
-  module:
-    build:
-      dockerfile: Dockerfile
-      context : ../sleepnode/.
+  nodejs:
+    image: "swellnode:latest"
     ports:
       - "3000:3000"
-    networks:
-      - sleep
-networks:
-  sleep:
-    driver: bridge
+    depends_on:
+      - springboot
+  springboot:
+    image: "swell:latest"
+    ports:
+      - "8080:8080"
+    restart: always
