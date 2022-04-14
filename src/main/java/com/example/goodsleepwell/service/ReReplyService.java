@@ -1,10 +1,10 @@
-package com.example.goodsleepwell.Service;
+package com.example.goodsleepwell.service;
 
-import com.example.goodsleepwell.Model.DefaultRes;
-import com.example.goodsleepwell.Model.sleepBoardRereply;
-import com.example.goodsleepwell.Utils.ResponseMessage;
-import com.example.goodsleepwell.Utils.StatusCode;
 import com.example.goodsleepwell.mapper.ReReplyMapper;
+import com.example.goodsleepwell.model.DefaultRes;
+import com.example.goodsleepwell.model.sleepBoardRereply;
+import com.example.goodsleepwell.util.ResponseMessage;
+import com.example.goodsleepwell.util.StatusCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;

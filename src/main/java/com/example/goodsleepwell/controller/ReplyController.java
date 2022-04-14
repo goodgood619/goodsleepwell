@@ -1,7 +1,7 @@
-package com.example.goodsleepwell.Controller;
+package com.example.goodsleepwell.controller;
 
-import com.example.goodsleepwell.Model.sleepBoardReply;
-import com.example.goodsleepwell.Service.ReplyService;
+import com.example.goodsleepwell.model.sleepBoardReply;
+import com.example.goodsleepwell.service.ReplyService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.http.HttpStatus;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.CompletableFuture;
 
-import static com.example.goodsleepwell.Model.DefaultRes.*;
+import static com.example.goodsleepwell.model.DefaultRes.*;
 
 @Slf4j
 @RestController
