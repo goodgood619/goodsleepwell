@@ -1,6 +1,5 @@
-package com.example.goodsleepwell;
+package com.example.goodsleepwell.api;
 
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -8,10 +7,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.File;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 public class OutSideApiTest {
     public static void main(String[] args) throws InterruptedException {
