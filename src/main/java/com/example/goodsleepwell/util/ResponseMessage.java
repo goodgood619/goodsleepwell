@@ -1,4 +1,4 @@
-package com.example.goodsleepwell.Utils;
+package com.example.goodsleepwell.util;
 
 public class ResponseMessage {
     public static final String LOGIN_SUCCESS = "로그인 성공";

@@ -1,4 +1,4 @@
-package com.example.goodsleepwell.Utils;
+package com.example.goodsleepwell.util;
 
 public class StatusCode {
     public static final int OK = 200;

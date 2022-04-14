@@ -1,13 +1,12 @@
-package com.example.goodsleepwell.Model;
+package com.example.goodsleepwell.model;
 
-import com.example.goodsleepwell.Utils.ResponseMessage;
-import com.example.goodsleepwell.Utils.StatusCode;
+import com.example.goodsleepwell.util.ResponseMessage;
+import com.example.goodsleepwell.util.StatusCode;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 

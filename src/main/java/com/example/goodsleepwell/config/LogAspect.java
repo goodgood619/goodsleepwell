@@ -1,4 +1,4 @@
-package com.example.goodsleepwell;
+package com.example.goodsleepwell.config;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class LogAspect {
     Logger logger = LoggerFactory.getLogger(LogAspect.class);
 
-    @Around("execution(* com.example.goodsleepwell.Controller.UserController.*(..))")
+    @Around("execution(* com.example.goodsleepwell.controller.UserController.*(..))")
     public Object logging(ProceedingJoinPoint pjp) throws Throwable {
         logger.info("rest api in ok -"+pjp.getSignature().getDeclaringTypeName()+"/"+pjp.getSignature().getName());
         Object ret = pjp.proceed();

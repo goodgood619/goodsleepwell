@@ -1,10 +1,12 @@
 package com.example.goodsleepwell.mapper;
 
-import com.example.goodsleepwell.Model.sleepBoardRereply;
+import com.example.goodsleepwell.model.sleepBoardRereply;
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 @Mapper
 public interface ReReplyMapper {
     @Select("select * from sleepBoardRereply where rid = #{rid}")

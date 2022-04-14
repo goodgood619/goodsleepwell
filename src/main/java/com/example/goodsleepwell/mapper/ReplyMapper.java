@@ -1,11 +1,13 @@
 package com.example.goodsleepwell.mapper;
 
-import com.example.goodsleepwell.Model.sleepBoardReply;
-import com.example.goodsleepwell.Model.sleepBoardRereply;
+import com.example.goodsleepwell.model.sleepBoardReply;
+import com.example.goodsleepwell.model.sleepBoardRereply;
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 @Mapper
 public interface ReplyMapper {
     @Select("select * from sleepBoardReply where id = #{id} order by registerTime desc limit #{page},#{cnt}")

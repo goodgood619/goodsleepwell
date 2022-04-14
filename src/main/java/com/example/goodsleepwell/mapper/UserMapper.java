@@ -1,11 +1,12 @@
 package com.example.goodsleepwell.mapper;
 
-import com.example.goodsleepwell.Model.sleepWellBoardContent;
+import com.example.goodsleepwell.model.sleepWellBoardContent;
 import org.apache.ibatis.annotations.*;
-import org.json.JSONObject;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 @Mapper
 public interface UserMapper {
 

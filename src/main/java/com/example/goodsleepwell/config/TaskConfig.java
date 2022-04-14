@@ -1,4 +1,4 @@
-package com.example.goodsleepwell;
+package com.example.goodsleepwell.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

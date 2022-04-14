@@ -1,13 +1,13 @@
-package com.example.goodsleepwell.Service;
+package com.example.goodsleepwell.service;
 
-import com.example.goodsleepwell.Model.DefaultRes;
-import com.example.goodsleepwell.Model.sleepBoardReply;
-import com.example.goodsleepwell.Model.sleepBoardRereply;
-import com.example.goodsleepwell.Model.sleepWellBestReply;
-import com.example.goodsleepwell.Utils.ResponseMessage;
-import com.example.goodsleepwell.Utils.StatusCode;
 import com.example.goodsleepwell.mapper.ReReplyMapper;
 import com.example.goodsleepwell.mapper.ReplyMapper;
+import com.example.goodsleepwell.model.DefaultRes;
+import com.example.goodsleepwell.model.sleepBoardReply;
+import com.example.goodsleepwell.model.sleepBoardRereply;
+import com.example.goodsleepwell.model.sleepWellBestReply;
+import com.example.goodsleepwell.util.ResponseMessage;
+import com.example.goodsleepwell.util.StatusCode;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
@@ -20,9 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 

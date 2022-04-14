@@ -1,4 +1,4 @@
-package com.example.goodsleepwell.Model;
+package com.example.goodsleepwell.model;
 
 import lombok.Data;
 

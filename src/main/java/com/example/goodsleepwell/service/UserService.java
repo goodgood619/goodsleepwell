@@ -1,10 +1,10 @@
-package com.example.goodsleepwell.Service;
+package com.example.goodsleepwell.service;
 
-import com.example.goodsleepwell.Model.DefaultRes;
-import com.example.goodsleepwell.Model.sleepWellBoardContent;
-import com.example.goodsleepwell.Utils.ResponseMessage;
-import com.example.goodsleepwell.Utils.StatusCode;
 import com.example.goodsleepwell.mapper.UserMapper;
+import com.example.goodsleepwell.model.DefaultRes;
+import com.example.goodsleepwell.model.sleepWellBoardContent;
+import com.example.goodsleepwell.util.ResponseMessage;
+import com.example.goodsleepwell.util.StatusCode;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
